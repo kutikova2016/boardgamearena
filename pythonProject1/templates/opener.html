@@ -1,0 +1,76 @@
+<form action="/change_done" method="post">
+<div>
+    <input type="radio" id="contactChoice1"
+     name="doner" value="email">
+    <label for="contactChoice1">Email</label>
+
+    <input type="radio" id="contactChoice2"
+     name="doner" value="phone">
+    <label for="contactChoice2">Phone</label>
+
+    <input type="radio" id="contactChoice3"
+     name="doner" value="mail">
+    <label for="contactChoice3">Mail</label>
+</div>
+ <div>
+    <button type="submit">Submit</button>
+  </div>
+</form>
+
+<div style="margin-top: 50px;" class="ui container">
+<h1 class="ui center aligned header green">{{ app_name }}</h1>
+    {% for e in list_table %}
+    <div class=""ui segment">
+         <b>{{ e['name'] }}</b> -
+        <!--p class="ui big header">{{e}}{{e}}</--p-->
+        {% if e['done']  %}
+            Сделано
+        {% else %}
+            Недоделано
+        {% endif %}
+    <form action="/change_done" method="post">
+
+    <input type="radio" id="contactChoice1"
+     name="doner" value="1_{{loop.index}}" {% if e['done'] %}checked{% else %} {% endif %}>
+    <label for="contactChoice1">Сделано</label>
+
+    <input type="radio" id="contactChoice2"
+     name="doner" value="0_{{loop.index}}" {% if e['done'] %} {% else %}checked{% endif %}>
+    <label for="contactChoice2">Не сделано</label>
+
+    <button type="submit">Submit</button>
+</form>
+        <br>Суть: {{ e['text'] }}
+        <br><br>
+    </div>
+{% endfor %}
+<a>Добавить новую задачу:</a>
+</div>
+<form action="/create_item" method="post" class="form-contact">
+    <p><label>Название новой задачи</label> <input type="text" name="task_name" value="" requied/>
+    <p><label>Содержимое новой задачи</label> <input type="text" name="texter" value="" requied/>
+    <p><input type="submit" value="Отправить"/>
+</form>
+<br>
+<h1>Opener page</h1>
+<h1>Opener page</h1>
+<br>
+yyy
+<br>
+
+{% if a > 1 %}
+gggkll
+{% else %}
+iojks
+iojks
+{% endif %}
+
+<br>
+
+{{ dict(request) }}
+<br>
+{% for e in list_table %}
+
+{{e}}
+<br>
+{% endfor %}
