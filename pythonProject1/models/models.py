@@ -3,15 +3,24 @@ from pydantic import BaseModel, constr, EmailStr, validator
 from starlette import status
 from starlette.responses import Response
 from sqlalchemy import Column, String, Integer, Boolean
+from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
+
+from core.db import Base
+
+class USER_ALCH (Base, SQLAlchemyBaseUserTable):
+    name = Column(String, )
 
 #from db.db_for_todo import Base
 
-class GAMER(Base):
-    __tablename__ = 'todos'
+class USER(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    nick = Column(String(100), nullable=False, unique=True)
+    password = Column(String(50), nullable=False)
+    games_history = Column(String(1000), default='')
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    is_complete = Column(Boolean, default=False)
+    def __repr__(self):
+        return f'Игрок {self.nick}, id: {self.id}'
 
 
 

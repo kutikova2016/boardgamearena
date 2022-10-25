@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Depends, Form, Request
+from fastapi import FastAPI, Cookie, Depends, Form, Request
 from fastapi.responses import PlainTextResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+# from sqlalchemy.orm import Session
 import uvicorn
+from datetime import datetime
 
 from starlette import status
 from starlette.responses import Response
@@ -12,13 +13,15 @@ from starlette.staticfiles import StaticFiles
 #from models.models import BaseModel
 from pydantic import BaseModel
 
+from db.db_for_todo import db_get_all_gamers
+
 app = FastAPI()  # noqa: pylint=invalid-name
 
 table_users = {
     'a': 'bukva A'
     , 'b': 'bukva B'
 }
-
+print(db_get_all_gamers())
 templ = Jinja2Templates(directory='templates')
 
 class Users(BaseModel):
@@ -39,9 +42,32 @@ def chenge_doner_list_table(doner: bool, index: int):
     list_table[index]['done'] = doner
 
 
+@app.get("/all_gamers_list", response_class=PlainTextResponse)
+def all_gamers_list():
+    retu = db_get_all_gamers()
+    return retu
+
+
 @app.get("/", response_class=HTMLResponse)
 def home():
     return templ.TemplateResponse('opener.html', {"request": {'a':None, 'b': None}, 'a': 0, 'list_table': list_table})
+
+
+@app.get("/registration", response_class=HTMLResponse)
+def registration():
+    return templ.TemplateResponse('registration.html', {"request": {}})
+
+
+@app.post("/new_user", response_class=HTMLResponse)
+def new_user(response: Response, new_users_name: str = Form(...), password: str = Form(...)):
+    response.set_cookie(key="usernamer", value=new_users_name)
+    return f'Ваше имя: {new_users_name}, а пароль {password}'+'<br><br><br><a href="/"> Обратно на открывающую страницу</a><br>'
+
+
+@app.get("/registration_check", response_class=HTMLResponse)
+def registration_check(usernamer = Cookie(default='')):
+    registration_flg = len(usernamer) > 0
+    return templ.TemplateResponse('registration_check.html', {"request": {}, "registration_flg": registration_flg, "usernamer": usernamer})
 
 
 @app.post("/change_done", response_class=HTMLResponse)
@@ -68,6 +94,7 @@ def root():
         </form>
         zavershaushii text
     """
+
 
 @app.get("/add", response_class=PlainTextResponse)
 def add():
@@ -111,5 +138,20 @@ def create_user(id: str = 'default1', name: str = 'default2'):
     return result
 
 
+@app.get("/set_cooke")
+def root(response: Response):
+    now = datetime.now()    # получаем текущую дату и время
+    response.set_cookie(key="last_visit", value=now)
+    response.set_cookie(key="huinya", value='ebanaya')
+    return  {"message": "куки установлены"}
+
+
+@app.get("/read_cooke")
+def root(last_visit = Cookie(), huinya = Cookie()):
+    return  {"last_visit": last_visit, 'huinya': huinya}
+
+
 if __name__ == '__main__':
     uvicorn.run('main:app', port=8000, host="127.0.0.1", reload=True)
+
+#"""

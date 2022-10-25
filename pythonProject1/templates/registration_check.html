@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration check</title>
+</head>
+<body>
+{% if registration_flg == True %}
+Ваш ник: {{ usernamer }}, вы зарегистрированы
+{% else %}
+Мы не видим вас в списке( Вы пока не зарегистрирвоаны
+{% endif %}
+<br><br><br>
+<a href="/"> Обратно на открывающую страницу</a><br>
+</body>
+</html>
